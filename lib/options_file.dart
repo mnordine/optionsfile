@@ -13,23 +13,22 @@ import 'dart:io';
  * Any line which does not contain an equals sign is ignored.
  */
 class OptionsFile {
-  Map<String, String> _map;
-  
+  final _map = <String, String>{};
+
   /**
    * Load options from the file called [filename], with defaults in the [defaults] file if specified.
    * 
    * Throws [FileIOException] if either file specified does not exist. 
    */
-  OptionsFile(String filename, [String defaults]) {
-    _map = <String, String>{};
+  OptionsFile(String filename, {String? defaults}) {
     if (defaults != null) {
-      var defaultOptions = new File(defaults);
+      var defaultOptions = File(defaults);
       _readOptions(defaultOptions);
     }
-    var options = new File(filename);
+    var options = File(filename);
     _readOptions(options);
   }
-  
+
   void _readOptions(File options) {
     if (options.existsSync()) {
       var lines = options.readAsLinesSync();
@@ -44,16 +43,16 @@ class OptionsFile {
         }
       }
     } else {
-      throw new FileSystemException("File not found", options.path);
+      throw FileSystemException("File not found", options.path);
     }
   }
-  
+
   /**
    * Get a string value from the options file. If the value is not found in the file,
    * null is returned.
    */
-  String operator[](String key) => _map[key];
-  
+  String? operator [](String key) => _map[key];
+
   /**
    * Get an integer value from the options file. If the given [key] is not found in the 
    * options file or the default options file, the [defaultValue] is returned if specified, 
@@ -61,20 +60,20 @@ class OptionsFile {
    * 
    * Throws a [FormatException] if the value is not a valid integer literal.
    */
-  int getInt(String key, [int defaultValue]) {
+  int? getInt(String key, {int? defaultValue}) {
     var value = _map[key];
     if (value == null) {
       return defaultValue;
     }
     return int.parse(value);
   }
-  
+
   /**
    * Get a string value from the options file. If the given [key] is not found in the 
    * options file or the default options file, the [defaultValue] is returned if specified, 
    * or null if it is not specified.
    */
-  String getString(String key, [String defaultValue]) {
+  String? getString(String key, {String? defaultValue}) {
     var value = _map[key];
     if (value != null) {
       return value;
